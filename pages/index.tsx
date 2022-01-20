@@ -4,11 +4,19 @@ import Image from 'next/image';
 import { useRef, useState } from 'react';
 import styles from '../styles/Home.module.css';
 
-const Home: NextPage = () => {
-  const [user, setUser] = useState({ email: '', password: '' });
+interface Props {
+  data: {};
+}
+
+const Home: NextPage<Props> = ({ data }) => {
+  // * What does <Props> mean?
+
+  const [user, setUser] = useState({ username: '', password: '' });
+
+  console.log(data);
 
   async function login() {
-    console.log(JSON.stringify({ user }));
+    console.log(JSON.stringify(user));
   }
 
   return (
@@ -52,14 +60,14 @@ const Home: NextPage = () => {
       {/* login section */}
       <section className="md:w-5/12">
         <div className="lg:p-16 p-8 h-full flex flex-col align-middle">
-          <div className="flex flex-col my-auto xl:px-12">
+          <div className="flex flex-col items-center my-auto xl:px-12">
             <label className="block">
-              <span className="text-sm font-bold">Email</span>
+              <span className="text-sm font-bold">Username</span>
               <input
                 className="w-full p-2 border-2 border-brand-neutral-0 mb-3"
-                type="email"
-                value={user.email}
-                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                type="text"
+                value={user.username}
+                onChange={(e) => setUser({ ...user, username: e.target.value })}
               />
             </label>
             <label className="block">
@@ -72,7 +80,7 @@ const Home: NextPage = () => {
               />
             </label>
             <button
-              className="w-full p-2 bg-brand-green text-white font-bold my-3 uppercase"
+              className="w-full p-2 max-w-[280px] bg-brand-green text-white font-bold my-3 uppercase"
               onClick={login}
             >
               Login
@@ -83,5 +91,15 @@ const Home: NextPage = () => {
     </main>
   );
 };
+
+export async function getServerSideProps() {
+  // Init Apollo Client
+
+  // fetch data from server
+
+  return {
+    props: { data: 'ini ok' },
+  };
+}
 
 export default Home;
