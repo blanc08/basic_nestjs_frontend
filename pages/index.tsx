@@ -1,3 +1,4 @@
+import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -94,11 +95,24 @@ const Home: NextPage<Props> = ({ data }) => {
 
 export async function getServerSideProps() {
   // Init Apollo Client
+  const client = new ApolloClient({
+    uri: 'http://localhost:4000/graphql',
+    cache: new InMemoryCache(),
+  });
 
   // fetch data from server
+  const { data } = await client.query({
+    query: gql`
+      {
+        cats {
+          id
+        }
+      }
+    `,
+  });
 
   return {
-    props: { data: 'ini ok' },
+    props: { data },
   };
 }
 
