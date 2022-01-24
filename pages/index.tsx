@@ -1,25 +1,29 @@
-import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  ApolloProvider,
+  gql,
+  InMemoryCache,
+  useQuery,
+} from '@apollo/client';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
+import SignInForm from '../components/organisms/SignInForm';
+import client from '../config/api/apollo-client';
+import { setSignin } from '../services/auth';
 import styles from '../styles/Home.module.css';
 
-interface Props {
-  data: {};
-}
-
-const Home: NextPage<Props> = ({ data }) => {
-  // * What does <Props> mean?
-
-  const [user, setUser] = useState({ username: '', password: '' });
-
-  console.log(data);
-
-  async function login() {
-    console.log(JSON.stringify(user));
+const getCats = gql`
+  {
+    cats {
+      id
+      name
+    }
   }
+`;
 
+const Home: NextPage = () => {
   return (
     <main className="md:flex flex-row h-screen">
       <Head>
@@ -58,62 +62,49 @@ const Home: NextPage<Props> = ({ data }) => {
           </footer>
         </div>
       </section>
-      {/* login section */}
-      <section className="md:w-5/12">
-        <div className="lg:p-16 p-8 h-full flex flex-col align-middle">
-          <div className="flex flex-col items-center my-auto xl:px-12">
-            <label className="block">
-              <span className="text-sm font-bold">Username</span>
-              <input
-                className="w-full p-2 border-2 border-brand-neutral-0 mb-3"
-                type="text"
-                value={user.username}
-                onChange={(e) => setUser({ ...user, username: e.target.value })}
-              />
-            </label>
-            <label className="block">
-              <span className="text-sm font-bold">Password</span>
-              <input
-                className="w-full p-2 border-2 border-brand-neutral-0 mb-3"
-                type="password"
-                value={user.password}
-                onChange={(e) => setUser({ ...user, password: e.target.value })}
-              />
-            </label>
-            <button
-              className="w-full p-2 max-w-[280px] bg-brand-green text-white font-bold my-3 uppercase"
-              onClick={login}
-            >
-              Login
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* signin section */}
+      <SignInForm />
     </main>
   );
 };
 
-export async function getServerSideProps() {
-  // Init Apollo Client
-  const client = new ApolloClient({
-    uri: 'http://localhost:4000/graphql',
-    cache: new InMemoryCache(),
-  });
+// export async function getServerSideProps() {
+//   // Init Apollo Client
+//   const client = new ApolloClient({
+//     uri: 'http://localhost:4000/graphql',
+//     cache: new InMemoryCache(),
+//   });
 
-  // fetch data from server
-  const { data } = await client.query({
-    query: gql`
-      {
-        cats {
-          id
-        }
-      }
-    `,
-  });
+//   // fetch data from server
+//   const { data } = await client.query({
+//     query: gql`
+//       {
+//         cats {
+//           id
+//           name
+//         }
+//       }
+//     `,
+//   });
 
-  return {
-    props: { data },
-  };
+//   return {
+//     props: { data },
+//   };
+// }
+
+function Cats() {
+  const { loading, error, data } = useQuery(getCats);
+
+  console.log(data);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
+
+  return data.cats.map(({ id, name }: { id: number; name: string }) => (
+    <div key={id}>
+      <p>{name}</p>
+    </div>
+  ));
 }
 
 export default Home;
