@@ -58,7 +58,7 @@ const Dashboard: NextPage = () => {
           {data.cats.map((cat: Cat) => (
             <a
               key={cat.id}
-              className="border-b bg-[url('/images/1.jpg')] bg-origin-border h-[380px] sm:h-[220px] xl:h-[250px] bg-center bg-no-repeat bg-cover bg-clip-border relative border-gray-200 shadow-lg origin-bottom-left hover:scale-110 hover:z-10  transition-all hover:cursor-pointer"
+              className="border-b bg-[url('/images/1.jpg')] bg-origin-border h-[380px] sm:h-[220px] xl:h-[280px] bg-center bg-no-repeat bg-cover bg-clip-border relative border-gray-200 shadow-lg origin-bottom-left hover:scale-110 hover:z-10  transition-all hover:cursor-pointer"
             >
               <div className="py-2 px-4 overflow-hidden absolute bottom-0 z-10 bg-white w-full">
                 <div className="flex flex-col md:flex-row md:items-center">
