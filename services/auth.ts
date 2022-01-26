@@ -1,4 +1,10 @@
-import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  createHttpLink,
+  gql,
+  InMemoryCache,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import client from '../config/api/apollo-client';
 
 export const setSignin = async (user: {}) => {

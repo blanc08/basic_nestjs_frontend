@@ -1,27 +1,7 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  gql,
-  InMemoryCache,
-  useQuery,
-} from '@apollo/client';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
 import SignInForm from '../components/organisms/SignInForm';
-import client from '../config/api/apollo-client';
-import { setSignin } from '../services/auth';
-import styles from '../styles/Home.module.css';
-
-const getCats = gql`
-  {
-    cats {
-      id
-      name
-    }
-  }
-`;
 
 const Home: NextPage = () => {
   return (
@@ -67,44 +47,5 @@ const Home: NextPage = () => {
     </main>
   );
 };
-
-// export async function getServerSideProps() {
-//   // Init Apollo Client
-//   const client = new ApolloClient({
-//     uri: 'http://localhost:4000/graphql',
-//     cache: new InMemoryCache(),
-//   });
-
-//   // fetch data from server
-//   const { data } = await client.query({
-//     query: gql`
-//       {
-//         cats {
-//           id
-//           name
-//         }
-//       }
-//     `,
-//   });
-
-//   return {
-//     props: { data },
-//   };
-// }
-
-function Cats() {
-  const { loading, error, data } = useQuery(getCats);
-
-  console.log(data);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
-
-  return data.cats.map(({ id, name }: { id: number; name: string }) => (
-    <div key={id}>
-      <p>{name}</p>
-    </div>
-  ));
-}
 
 export default Home;
