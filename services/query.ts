@@ -14,3 +14,25 @@ export const cats = gql`
     }
   }
 `;
+
+const SignInQuery = gql`
+  mutation signin($input: SigninUserInput!) {
+    signin(signinUserInput: $input) {
+      user {
+        username
+      }
+      access_token
+    }
+  }
+`;
+
+export const createCatQuery = gql`
+  mutation createCat($input: CreateCatInput!) {
+    createCat(input: $input) {
+      name
+      age
+      breed
+      description
+    }
+  }
+`;
