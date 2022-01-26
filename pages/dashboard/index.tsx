@@ -2,7 +2,9 @@ import { gql, useQuery } from '@apollo/client';
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import { cats } from '../../services/query';
-
+import Modal from 'react-modal';
+import { useState } from 'react';
+import ReactModal from 'react-modal';
 interface Cat {
   id: number;
   name: string;
@@ -13,9 +15,36 @@ interface Cat {
   };
 }
 
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+
+Modal.setAppElement('#__next');
 const Dashboard: NextPage = () => {
   const { loading, error, data } = useQuery(cats);
   console.log(data);
+  let subtitle: any;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
 
   if (loading) return <p> Loading...</p>;
   if (error) return <p>Error :{error}</p>;
@@ -57,10 +86,11 @@ const Dashboard: NextPage = () => {
         <div className="grid sm:grid-cols-4 md:gap-10 gap-4 md:mx-12 lg:mx-36">
           {data.cats.map((cat: Cat) => (
             <a
+              onClick={openModal}
               key={cat.id}
-              className="border-b bg-[url('/images/1.jpg')] bg-origin-border h-[380px] sm:h-[220px] xl:h-[280px] bg-center bg-no-repeat bg-cover bg-clip-border relative border-gray-200 shadow-lg origin-bottom-left hover:scale-110 hover:z-10  transition-all hover:cursor-pointer"
+              className="border-b bg-[url('/images/1.jpg')] bg-origin-border h-[380px] sm:h-[220px] xl:h-[280px] bg-center bg-no-repeat bg-cover bg-clip-border relative border-gray-200 shadow-lg origin-bottom-left hover:scale-110  transition-all hover:cursor-pointer"
             >
-              <div className="py-2 px-4 overflow-hidden absolute bottom-0 z-10 bg-white w-full">
+              <div className="py-2 px-4 overflow-hidden absolute bottom-0 bg-white w-full">
                 <div className="flex flex-col md:flex-row md:items-center">
                   <h2 className="text-gray-900 text-base font-medium first-letter:uppercase">
                     {cat.name}
@@ -117,6 +147,22 @@ const Dashboard: NextPage = () => {
         </div>
       </section>
 
+      {/* Modal */}
+      <ReactModal
+        isOpen={modalIsOpen}
+        contentLabel="Inline Styles Modal Example"
+        // style={{
+        //   overlay: {
+        //     backgroundColor: 'papayawhip',
+        //   },
+        //   content: {
+        //     color: 'lightsteelblue',
+        //   },
+        // }}
+      >
+        <p>Modal text!</p>
+        <button onClick={closeModal}>Close Modal</button>
+      </ReactModal>
       <footer>
         <a
           target="_blank"
