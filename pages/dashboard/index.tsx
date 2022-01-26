@@ -1,26 +1,27 @@
 import { gql, useQuery } from '@apollo/client';
 import type { NextPage } from 'next';
 import Image from 'next/image';
-import { toast } from 'react-toastify';
+import { cats } from '../../services/query';
 
-const getCats = gql`
-  {
-    cats {
-      id
-      name
-    }
-  }
-`;
+interface Cat {
+  id: number;
+  name: string;
+  age: number;
+  breed: string;
+  user: {
+    username: string;
+  };
+}
 
 const Dashboard: NextPage = () => {
-  const { loading, error, data } = useQuery(getCats);
+  const { loading, error, data } = useQuery(cats);
   console.log(data);
 
   if (loading) return <p> Loading...</p>;
   if (error) return <p>Error :{error}</p>;
 
   return (
-    <div className="px-2 h-screen lg:scrollbar-thin scrollbar-thumb-brand-green scrollbar-track-gray-100 flex flex-col gap-4">
+    <div className="md:pr-2 h-screen lg:scrollbar-thin scrollbar-thumb-brand-green scrollbar-track-gray-100 flex flex-col">
       <header className="text-gray-700 body-font border-b border-gray-200">
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
           <a
@@ -30,14 +31,8 @@ const Dashboard: NextPage = () => {
           >
             <Image src="/images/cat.svg" alt="" width={50} height={50} />
           </a>
-          <span>Cat</span>
-          <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-            <a href="#" className="mr-5 hover:text-gray-900">
-              It&apos;s just a link
-            </a>
-          </nav>
-          <button className="flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">
-            Button{' '}
+          <button className="md:ml-auto mr-2 flex items-center bg-brand-green border-0 py-1 px-3 focus:outline-none hover:bg-brand-neutral-1 hover:text-black text-brand-white transition duration-100 ease-in-out font-semibold text-sm uppercase mt-4 md:mt-0">
+            Add cat
             <svg
               fill="none"
               stroke="currentColor"
@@ -50,30 +45,48 @@ const Dashboard: NextPage = () => {
               <path d="M5 12h14M12 5l7 7-7 7"></path>
             </svg>
           </button>
+          <nav className="flex flex-wrap items-center text-base justify-center border-l-2 pl-4 ml-4">
+            <a href="#" className="mr-5 hover:text-gray-900">
+              Logout
+            </a>
+          </nav>
         </div>
       </header>
-      <section className="px-4">
+      <section className="sm:px-4 px-6 md:py-16 py-6 bg-brand-neutral-0">
         {/* show cat with card flex */}
-        <div className="block">
-          {data.cats.map((cat: { id: number; name: string }) => (
-            <div
+        <div className="grid sm:grid-cols-4 md:gap-10 gap-4 md:mx-12 lg:mx-36">
+          {data.cats.map((cat: Cat) => (
+            <a
               key={cat.id}
-              className="flex flex-col border-b border-gray-200 p-4"
+              className="border-b bg-[url('/images/1.jpg')] bg-origin-border h-[380px] sm:h-[220px] xl:h-[250px] bg-center bg-no-repeat bg-cover bg-clip-border relative border-gray-200 shadow-lg origin-bottom-left hover:scale-110 hover:z-10  transition-all hover:cursor-pointer"
             >
-              <div className="flex justify-between items-center">
-                <h2 className="text-gray-900 text-lg font-medium">
-                  {cat.name}
-                </h2>
-                <button className="bg-gray-200 text-gray-900 font-medium py-1 px-3 rounded">
-                  Edit
-                </button>
+              <div className="py-2 px-4 overflow-hidden absolute bottom-0 z-10 bg-white w-full">
+                <div className="flex flex-col md:flex-row md:items-center">
+                  <h2 className="text-gray-900 text-base font-medium first-letter:uppercase">
+                    {cat.name}
+                  </h2>
+                </div>
+                <div className="flex flex-row justify-center lg:gap-2 my-2">
+                  <div className="p-2 relative text-center uppercase text-brand-neutral-2 text-[10px]">
+                    <h6 className="text-brand-neutral-1 text-xs">Sex</h6>
+                    <Image
+                      src="/icons/mars-solid.svg"
+                      alt="gender"
+                      height={20}
+                      width={20}
+                    />
+                  </div>
+                  <div className="p-2 text-center text-xs">
+                    <h6 className="text-brand-neutral-1 text-xs">Age</h6>
+                    {cat.age}{' '}
+                  </div>
+                  <div className="p-2 text-center text-xs">
+                    <h6 className="text-brand-neutral-1 text-xs">Breed</h6>
+                    {cat.breed}
+                  </div>
+                </div>
               </div>
-              <p className="text-gray-700 text-base">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Voluptatibus quia, nulla! Maiores et perferendis eaque,
-                exercitationem praesentium nihil.
-              </p>
-            </div>
+            </a>
           ))}
         </div>
       </section>
