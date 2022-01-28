@@ -6,6 +6,7 @@ import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { useMutation } from '@apollo/client';
 import { createCatQuery } from '../../../services/query';
+import { Cat } from '../../../services/interface';
 
 interface DataType {
   name: string;
@@ -14,10 +15,14 @@ interface DataType {
   breed: string;
   description: string;
 }
+
+interface propsInterface {
+  addHandler: (data: Cat) => void;
+}
 ReactModal.setAppElement('#__next');
-export default function Header() {
-  let subtitle: any;
+export default function Header({ addHandler }: propsInterface) {
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [addCat, { error }] = useMutation(createCatQuery);
   const [allValues, setAllValues] = useState<DataType>({
     name: '',
     userId: 0,
@@ -26,20 +31,12 @@ export default function Header() {
     description: '',
   });
 
-  const [addCat, { data, loading, error }] = useMutation(createCatQuery);
-
-  if (loading) return <p>Submitting...</p>;
   if (error) {
     return <p>{`Submission error! ${error.message}`}</p>;
   }
 
   function openModal() {
     setIsOpen(true);
-  }
-
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = '#f00';
   }
 
   function closeModal() {
@@ -75,7 +72,10 @@ export default function Header() {
     });
 
     if (response.data.createCat) {
+      addHandler(response.data.createCat);
       toast.success('Cat added successfully');
+      console.log(response.data.createCat);
+
       setIsOpen(false);
     }
   }
@@ -87,8 +87,8 @@ export default function Header() {
   };
 
   return (
-    <header className="text-gray-700 body-font border-b border-gray-200">
-      <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+    <header className="body-font border-b border-gray-200 shadow-sm">
+      <div className="container mx-auto flex flex-wrap p-1.5 flex-col md:flex-row items-center">
         <a
           className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
           href="#"
@@ -141,7 +141,7 @@ export default function Header() {
             New cat
           </h2>
           <button
-            className="py-2 px-4 bg-brand-green text-brand-white font-semibold"
+            className="py-2 px-4 bg-brand-green text-brand-neutral-0 font-semibold"
             onClick={closeModal}
           >
             Close

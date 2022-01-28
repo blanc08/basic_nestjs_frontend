@@ -2,54 +2,31 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-import { gql, useMutation } from '@apollo/client';
-
-const SignInQuery = gql`
-  mutation signin($input: SigninUserInput!) {
-    signin(signinUserInput: $input) {
-      user {
-        username
-      }
-      access_token
-    }
-  }
-`;
+import { useMutation } from '@apollo/client';
+import { SignInQuery } from '../../../services/query';
 
 export default function SignInForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [setSignin, { data, loading, error }] = useMutation(SignInQuery);
+  const [setSignin] = useMutation(SignInQuery);
+
   const router = useRouter();
-
-  // if (loading) {
-  //   return <p>Loading...</p>;
-  // }
-
-  if (error) {
-    console.log('error', error);
-
-    toast.error(error.message);
-  }
-
-  if (data?.signin) {
-    console.log(data.signin);
-
-    toast.success('Login berhasil!');
-
-    const { access_token } = data.signin;
-    const tokenBase64 = btoa(access_token);
-
-    Cookies.set('access_token', tokenBase64, { expires: 1 });
-    router.push('/dashboard');
-  }
 
   const signin = async () => {
     if (!username || !password) {
-      toast.error('Email dan Password wajib diisi');
+      toast.error('Email and password are required');
     } else {
-      await setSignin({
+      const result = await setSignin({
         variables: { input: { username, password } },
       });
+      if (result.data) {
+        console.log(result.data);
+        toast.success('Login berhasil!');
+        const { access_token } = result.data.signin;
+        const tokenBase64 = btoa(access_token);
+        Cookies.set('access_token', tokenBase64, { expires: 1 });
+        router.push('/dashboard');
+      }
     }
   };
   return (

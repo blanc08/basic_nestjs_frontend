@@ -15,13 +15,15 @@ export const cats = gql`
   }
 `;
 
-const SignInQuery = gql`
-  mutation signin($input: SigninUserInput!) {
-    signin(signinUserInput: $input) {
-      user {
-        username
+export const usersQuery = gql`
+  query {
+    users {
+      id
+      username
+      cats {
+        name
+        age
       }
-      access_token
     }
   }
 `;
@@ -33,6 +35,17 @@ export const createCatQuery = gql`
       age
       breed
       description
+    }
+  }
+`;
+
+export const SignInQuery = gql`
+  mutation signin($input: SigninUserInput!) {
+    signin(signinUserInput: $input) {
+      user {
+        username
+      }
+      access_token
     }
   }
 `;
